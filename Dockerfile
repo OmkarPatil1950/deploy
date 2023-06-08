@@ -1,17 +1,17 @@
-FROM node:12-alpine
+# Use the OpenShift base image for Java applications
+FROM registry.access.redhat.com/ubi8/openjdk-11
 
+# Set the working directory in the container
 WORKDIR /app
 
-COPY package*.json ./
+# Copy the executable JAR file and any other necessary files to the container
+COPY target/my-api.jar /app/my-api.jar
 
-RUN npm install
+# Expose the port on which the Spring Boot application will listen
+EXPOSE 8080
 
-COPY . .
+# Set the user for running the application
+USER 1001
 
-# Create the directory for .eslintcache and change ownership
-RUN mkdir -p /app/node_modules/.cache && chown -R node:node /app/node_modules/.cache && chmod -R 777 /app/node_modules/.cache
-
-# Change user back to node
-USER node
-
-CMD [ "npm", "start" ]
+# Set the command to run the Spring Boot application when the container starts
+CMD ["java", "-jar", "/app/my-api.jar"]
